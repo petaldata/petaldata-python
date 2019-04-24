@@ -44,6 +44,7 @@ class Contact(object):
 
   def get_metadata(self):
     r = requests.get(self.api_url+"/metadata.pandas",  headers=self.request_headers)
+    r.raise_for_status()
     metadata = r.json()
     print("Loaded Hubspot metadata w/keys=",list(metadata.keys()))
     return metadata
@@ -52,7 +53,7 @@ class Contact(object):
   def request_headers(self):
     return {
       "Authorization": "Bearer %s" % (petaldata.api_key,),
-      'HUBSPOT-AUTHORIZATION': "Bearer {}".format(petaldata.resource.hubspot.api_key)
+      'HUBSPOT-AUTHORIZATION': petaldata.resource.hubspot.api_key
     }
 
   def load(self):
@@ -86,6 +87,7 @@ class Contact(object):
       print("Pickle file does not exist at",self.pickle_filename)
       return None
     print("Loading {} MB Pickle file...".format(util.file_size_in_mb(self.pickle_filename)))
+    print("\t...",self.pickle_filename)
     self.df = pd.read_pickle(self.pickle_filename)
     print("\t...Done. Dataframe Shape:",self.df.shape)
     print("\tTime Range:",self.df.createdate.min(), "-", self.df.createdate.max())
