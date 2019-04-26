@@ -21,7 +21,7 @@ petaldata.cache_dir = os.getenv("CACHE_DIR") # downloads are saved to this direc
 
 ## Example Usage
 
-See the [examples directory]("/examples").
+See the [examples directory](/examples).
 
 ## Releasing
 
