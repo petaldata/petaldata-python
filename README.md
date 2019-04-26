@@ -1,6 +1,6 @@
 # PetalData Python Library
 
-The PetalData Python library provides convenient access to the PetalData API from applications written in the Python language. It includes a set of convenience methods to handle common data access patterns like downloading data from a resource and incrementally updating the dataset.
+The PetalData Python library provides convenient access to the [PetalData](https://petaldata.app) API from applications written in the Python language. It includes a set of convenience methods to handle common data access patterns like downloading data from a resource and incrementally updating the dataset.
 
 ## Installation
 
