@@ -4,7 +4,9 @@ The PetalData Python library provides convenient access to the [PetalData](https
 
 ## Installation
 
+```
 pip install --upgrade petaldata
+```
 
 ## Requirements
 
