@@ -12,10 +12,9 @@ from petaldata import util
 class Contact(object):
   RESOURCE_URL = '/hubspot/contacts'
 
-  def __init__(self,cache_dir,pickle_filename="hubspot_contact.pkl"):
-    self.cache_dir = cache_dir
+  def __init__(self,pickle_filename="hubspot_contact.pkl"):
     self.csv_filename = None
-    self.pickle_filename = self.cache_dir + pickle_filename
+    self.pickle_filename = petaldata.cache_dir + pickle_filename
     self.df = None
     self.__metadata = None
     pass
@@ -27,7 +26,8 @@ class Contact(object):
   @classmethod
   def from_pickle(cls, filename):
     cache_dir = os.path.dirname(os.path.realpath(filename))
-    instance = cls(cache_dir,pickle_filename=filename)
+    petaldata.cache_dir = cache_dir
+    instance = cls(pickle_filename=filename)
     instance.load_dataframe_from_pickle()
 
     return instance
@@ -53,7 +53,7 @@ class Contact(object):
   def request_headers(self):
     return {
       "Authorization": "Bearer %s" % (petaldata.api_key,),
-      'HUBSPOT-AUTHORIZATION': petaldata.resource.hubspot.api_key
+      'HUBSPOT_API_KEY': petaldata.resource.hubspot.api_key
     }
 
   def load(self):
@@ -64,7 +64,7 @@ class Contact(object):
       self.load_from_download()
 
   def update(self):
-    contact_new = Contact(self.cache_dir)
+    contact_new = Contact()
     contact_new.download(created_gt=self.updated_at)
     contact_new.load_from_download() # don't want to save a pickle! would override existing.
     self.df = pd.concat([self.df,contact_new.df], verify_integrity=True)
@@ -101,8 +101,7 @@ class Contact(object):
     print("Loading {} MB CSV file...".format(util.file_size_in_mb(self.csv_filename)))
     dataframe = pd.read_csv(self.csv_filename,parse_dates = self.metadata.get("convert_dates"))
     dataframe.set_index(self.metadata.get("index"),inplace=True)
-    # How??? TypeError: Already tz-aware, use tz_convert to convert.
-    # dataframe = self.__set_date_tz(dataframe)
+    dataframe = self.__set_date_tz(dataframe)
     self.df = dataframe
     print("\t...Done. Dataframe Shape:",self.df.shape)
     contacts_count = self.df.shape[0]
@@ -111,7 +110,7 @@ class Contact(object):
     return self.df
 
   def __csv_download_filename(self,start_time):
-    return self.cache_dir + "hubspot_contact_" + start_time.strftime("%Y%m%d-%H%M%S") + ".csv"
+    return petaldata.cache_dir + "hubspot_contact_" + start_time.strftime("%Y%m%d-%H%M%S") + ".csv"
 
   def download(self,created_gt=None,_offset=None):
     first_chunk = True
@@ -140,11 +139,12 @@ class Contact(object):
     return self.csv_filename
 
   def __set_date_tz(self,dataframe):
-    print(dataframe.createdate.max())
-    # set timezone? https://stackoverflow.com/questions/26089670/unable-to-apply-methods-on-timestamps-using-series-built-ins/38488959
     for col in self.metadata.get("convert_dates"):
         if dataframe[col].count() > 0:
-            dataframe[col] = dataframe[col].dt.tz_localize('UTC')
+            # Hubspot sends down tz already (ex: "2019-04-22T00:00:00Z")
+            # Strips out tz info so don't have to worry about comparing tz-aware datetimes
+            # df[col] = pd.to_datetime(df_payments[col], utc=True).dt.tz_convert(None)
+            dataframe[col] = dataframe[col].dt.tz_convert(None)
     return dataframe
 
   def __request_params(self,created_gt,_offset):
