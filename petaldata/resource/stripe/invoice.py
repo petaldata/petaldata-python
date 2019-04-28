@@ -1,5 +1,6 @@
 import petaldata
 from petaldata.resource.abstract import Resource
+import calendar
 
 class Invoice(Resource):
   RESOURCE_URL = '/stripe/invoices'
@@ -73,15 +74,7 @@ class Invoice(Resource):
   #   self.csv_filename = filename
   #   return self.csv_filename
 
-  def __set_date_tz(self,dataframe):
-    print(dataframe.createdate.max())
-    # set timezone? https://stackoverflow.com/questions/26089670/unable-to-apply-methods-on-timestamps-using-series-built-ins/38488959
-    for col in self.metadata.get("convert_dates"):
-        if dataframe[col].count() > 0:
-            dataframe[col] = dataframe[col].dt.tz_localize('UTC')
-    return dataframe
-
-  def __request_params(self,created_gt,_offset):
+  def request_params(self,created_gt,_offset):
     params = {}
     if created_gt is not None:
        params['created_gt'] = calendar.timegm(created_gt.timetuple())

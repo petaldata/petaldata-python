@@ -21,6 +21,8 @@ setuptools.setup(
     install_requires=[
         'pandas',
         'numpy',
-        'requests'
+        'requests',
+        'smart-open'
+        'boto3'
     ],
 )
