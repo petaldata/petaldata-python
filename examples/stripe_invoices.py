@@ -11,13 +11,12 @@ import os
 # Configuration
 
 petaldata.api_base = 'http://localhost:3001'
-petaldata.resource.hubspot.api_key = os.getenv("STRIPE_API_KEY")
-petaldata.cache_dir = os.getenv("CACHE_DIR")
+petaldata.resource.stripe.api_key = os.getenv("STRIPE_API_KEY")
+petaldata.storage.Local.dir = os.getenv("CACHE_DIR")
 
 # Loads Stripe Invoices. 
 
 invoices = petaldata.resource.stripe.Invoice()
 invoices.load()
-invoices.update()
+invoices.update(created_gt=petaldata.util.days_ago(30))
 invoices.save()
-# invoices.reset()

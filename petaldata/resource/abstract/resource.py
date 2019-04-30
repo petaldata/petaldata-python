@@ -12,8 +12,6 @@ from petaldata.storage import *
 class Resource(object):
   def __init__(self,base_pickle_filename="stripe_invoice.pkl"):
     self.csv_filename = None
-    # self.base_pickle_filename = base_pickle_filename
-    # self.pickle_filename = petaldata.cache_dir + base_pickle_filename
     self.df = None
     self.__metadata = None
     self.local = Local(base_pickle_filename)
@@ -32,18 +30,34 @@ class Resource(object):
     if self.df is None:
       print("\tUnable to load dataframe.")
     else:
+      print("\t...Done. Dataframe Shape:",self.df.shape)
       return self.df
 
-  def update(self):
+  # TODO - rename to merge?
+  # https://en.wikipedia.org/wiki/Merge_(SQL)
+  def update(self, created_gt=None):
     print("Updating...")
-    print("\t Most recent row=",self.updated_at)
+    if created_gt is None:
+      print("\tSetting created_gt=",self.updated_at)
+      created_gt = self.updated_at
+    else:
+      print("\tcreated >",created_gt)
     new = type(self)()
-    new.download(created_gt=self.updated_at)
+    new.download(created_gt=created_gt)
     new.load_from_download() # don't want to save a pickle! would override existing.
+    self.upsert(new)
+    return self
+
+  def upsert(self,other_resource):
     old_count = self.df.shape[0]
-    if new.df.shape[0] > 0:
-      # only contact if rows found, otherwise dtypes can change
-      self.df = pd.concat([self.df,new.df]).drop_duplicates().reset_index(drop=True)
+    # only concat if rows found, otherwise dtypes can change
+    # https://stackoverflow.com/questions/33001585/pandas-dataframe-concat-update-upsert
+    if other_resource.df.shape[0] > 0:
+      print("\tInserting new rows")
+      df = pd.concat([self.df, other_resource.df[~other_resource.df.index.isin(self.df.index)]])
+      print("\tUpdating existing rows")
+      df.update(other_resource.df)
+      self.df = df
 
     new_count = self.df.shape[0] - old_count
     if new_count > 0:
@@ -53,14 +67,19 @@ class Resource(object):
     else:
       print("No new rows.")
     return self
+    
 
   @property
   def updated_at(self):
     return self.df[self.CREATED_AT_FIELD].max()
 
-  def load_from_download(self):
-    print("Loading {} MB CSV file...".format(Local.file_size_in_mb(self.csv_filename)))
-    dataframe = pd.read_csv(self.csv_filename,parse_dates = self.metadata.get("convert_dates"))
+  def load_from_download(self,filename=None):
+    if filename is None:
+      filename = self.csv_filename
+    else:
+      filename = self.local.dir + filename
+    print("Loading {} MB CSV file...".format(Local.file_size_in_mb(filename)))
+    dataframe = pd.read_csv(filename,parse_dates = self.metadata.get("convert_dates"))
     dataframe.set_index(self.metadata.get("index"),inplace=True)
     dataframe = self.set_date_tz(dataframe)
     self.df = dataframe
@@ -85,7 +104,7 @@ class Resource(object):
   def save(self):
     print("Saving to Pickle file...")
     if self.local.enabled == True: self.local.save(self)
-    if s3: self.s3.save(self)
+    if self.s3: self.s3.save(self)
 
     return True
 
@@ -103,7 +122,6 @@ class Resource(object):
                     if (first_chunk):
                         first_chunk = False
                         print("\t...will update progress every 25 MB of data transfer.")
-                        print("\tSaving to", filename)
                     f.write(chunk)
                     size_in_mb = Local.file_size_in_mb(filename)
                     if ((size_in_mb > 1) & (len(chunk) > 1000) & (size_in_mb % 25 == 0) ):
@@ -141,12 +159,3 @@ class Resource(object):
   @property
   def api_url(self):
     return petaldata.api_base + self.RESOURCE_URL
-
-  # @classmethod
-  # def from_pickle(cls, filename):
-  #   cache_dir = os.path.dirname(os.path.realpath(filename))
-  #   petaldata.cache_dir = cache_dir
-  #   instance = cls(pickle_filename=filename)
-  #   instance.load_dataframe_from_pickle()
-
-  #   return instance

@@ -7,6 +7,7 @@ import petaldata
 from dotenv import load_dotenv
 load_dotenv(override=True)
 import os
+import datetime
 
 # Configuration
 
@@ -19,11 +20,11 @@ petaldata.storage.S3.aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
 petaldata.storage.S3.bucket_name = 'petaldata-test2'
 
 petaldata.storage.S3.enabled = True
-petaldata.storage.Local.enabled = True
+petaldata.storage.Local.enabled = False
 
-# Loads Stripe Invoices, using S3 for pickle file storage. 
+# Loads Stripe Invoices, using S3 storage. 
 
 invoices = petaldata.resource.stripe.Invoice()
 invoices.load()
-invoices.update()
+invoices.update(created_gt=petaldata.util.days_ago(30))
 invoices.save()
