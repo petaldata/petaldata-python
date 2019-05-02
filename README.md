@@ -18,7 +18,7 @@ The following configuration is required:
 
 ```python
 import petaldata
-petaldata.cache_dir = os.getenv("CACHE_DIR") # downloads are saved to this directory
+petaldata.storage.Local.dir = os.getenv("CACHE_DIR") # downloads are saved to this directory
 ```
 
 ## Example Usage
