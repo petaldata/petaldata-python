@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="petaldata",
-    version="0.0.3",
+    version="0.0.4",
     author="Derek Haynes",
     author_email="derek@petaldata.com",
     description="Python bindings for the PetalData API",
@@ -22,7 +22,7 @@ setuptools.setup(
         'pandas',
         'numpy',
         'requests',
-        'smart-open'
+        'smart-open',
         'boto3'
     ],
 )
