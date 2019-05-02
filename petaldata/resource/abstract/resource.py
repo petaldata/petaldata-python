@@ -54,9 +54,15 @@ class Resource(object):
     # https://stackoverflow.com/questions/33001585/pandas-dataframe-concat-update-upsert
     if other_resource.df.shape[0] > 0:
       print("\tInserting new rows")
+      print("created before concat:",self.df.created.dtype,self.df.created.head(5))
+      print("other created before concat:",other_resource.df.created.dtype,other_resource.df.created.head(5))
       df = pd.concat([self.df, other_resource.df[~other_resource.df.index.isin(self.df.index)]])
+      print("created after concat:",df.created.dtype,df.created.head(5))
       print("\tUpdating existing rows")
       df.update(other_resource.df)
+      # timezone is stripped after update. add back.
+      df = self.set_date_tz(df)
+      print("created after set_date_z:",df.created.dtype,df.created.head(5))
       self.df = df
 
     new_count = self.df.shape[0] - old_count
@@ -81,7 +87,7 @@ class Resource(object):
     print("Loading {} MB CSV file...".format(Local.file_size_in_mb(filename)))
     dataframe = pd.read_csv(filename,parse_dates = self.metadata.get("convert_dates"))
     dataframe.set_index(self.metadata.get("index"),inplace=True)
-    dataframe = self.set_date_tz(dataframe)
+    print("created from download:",dataframe.created.dtype,dataframe.created.head(3))
     self.df = dataframe
     print("\t...Done. Dataframe Shape:",self.df.shape)
     count = self.df.shape[0]
@@ -148,12 +154,14 @@ class Resource(object):
     print("Loaded metadata w/keys=",list(metadata.keys()))
     return metadata
 
-  def set_date_tz(self,dataframe):
+  @staticmethod
+  def set_date_tz(dataframe):
     for col in dataframe.columns:
+      # this is a tz-naive timestamp. w/a tz would look like "datetime64[ns, UTC]"
       if dataframe[col].dtype == 'datetime64[ns]':
-        # Sends down tz already (ex: "2019-04-22T00:00:00Z")
+        dataframe[col] = dataframe[col].dt.tz_localize('UTC')
         # Strips out tz info so don't have to worry about comparing tz-aware datetimes
-        dataframe[col] = dataframe[col].dt.tz_convert(None)
+        # dataframe[col] = dataframe[col].dt.tz_convert(None)
     return dataframe
 
   @property

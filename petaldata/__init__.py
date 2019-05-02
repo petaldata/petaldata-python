@@ -13,5 +13,7 @@ from petaldata.resource import *
 from petaldata.resource import abstract
 from petaldata.resource import hubspot
 from petaldata.resource import stripe
+from petaldata.resource.stripe.reports import *
+
 
 from petaldata.storage import *
