@@ -27,7 +27,7 @@ See the [examples directory](/examples).
 
 ## Releasing
 
-Generate the distribution archive, then upload the archive:
+Bump the version number in `setup.py`. Then generate the distribution archive and upload the archive:
 
 ```
 python setup.py sdist bdist_wheel
