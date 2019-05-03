@@ -30,6 +30,7 @@ See the [examples directory](/examples).
 Bump the version number in `setup.py`. Then generate the distribution archive and upload the archive:
 
 ```
+rm dist/*
 python setup.py sdist bdist_wheel
 python -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 ```

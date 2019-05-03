@@ -8,7 +8,10 @@ class Local(AbstractStorage):
   dir = None
 
   def available(self):
-    return self.dir_exists()
+    res = self.dir_exists()
+    if res == False:
+      print("The local storage directory does not exist at", self.dir)
+    return res
 
   def dir_exists(self):
     return os.path.isdir(self.dir)
