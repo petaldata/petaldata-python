@@ -30,7 +30,7 @@ class AbstractStripeReport(object):
 
     self._gsheet_client = None
 
-    self.end_timestamp = self.setup_time(end_time,tz=tz)
+    self.end_timestamp = self.setup_time(end_time)
 
   
   @staticmethod
