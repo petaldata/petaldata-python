@@ -2,18 +2,21 @@ import pandas as pd
 import datetime
 from datetime import datetime
 from datetime import date
+import pygsheets
 
 import petaldata
 from petaldata.resource.stripe.reports import query_filters
 
 class AbstractStripeReport(object):
-  def __init__(self,invoices):
+  def __init__(self,invoices,tz='UTC',end_time=datetime.now()):
     self.df = invoices.df
+    self.tz = tz
+    self.df = self.set_frame_tz(self.df,tz=tz)
     self.convert_annual_subs_to_monthly(self.df)
     self.df = self.add_simulated_annual_invoices(self.df)
+    self._gsheet_client = None
 
-  # def to_frame(self,tz='UTC'):
-  #   self.df = self.set_frame_tz(self.df,tz=tz)
+    self.end_timestamp = self.setup_time(end_time,tz=tz)
 
   @staticmethod
   def set_frame_tz(df,tz = 'UTC'):
@@ -34,7 +37,7 @@ class AbstractStripeReport(object):
   @staticmethod
   def setup_time(dt,tz=None):
     t=pd.Timestamp(dt)
-    t=t.tz_localize(tz).tz_convert(None)
+    t=t.tz_localize(tz)#.tz_convert(None)
     return t
 
   @staticmethod
@@ -79,21 +82,52 @@ class AbstractStripeReport(object):
     df[cols]=df[cols]/100
     return df
 
-  def to_gsheet(df,spreadsheet_name=None,worksheet_name=None,service_file=None):
-    gc=pygsheets.authorize(service_file=service_file)
 
-    print("Opening Google Sheet...")
+  def gsheet_client(self,creds):
+    if self._gsheet_client is None:
+      self._gsheet_client = pygsheets.authorize(custom_credentials=creds.with_scopes(['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive.metadata.readonly']))
+      
+    return self._gsheet_client;
 
-    # Must share sheet with "client_email" from JSON creds file
-    sh = gc.open('Copy of Revenue Reporting')
+  def find_or_create_wks(self,sh,worksheet_title):
+    try:
+      wks = sh.worksheet_by_title(worksheet_title)
+      print("\t...opening existing worksheet. title=",worksheet_title)
+    except pygsheets.exceptions.WorksheetNotFound:
+      print("\t...creating new worksheet. title=",worksheet_title)
+      wks = sh.add_worksheet(worksheet_title)
 
-    wks = sh.worksheet_by_title("Monthly MRR via Invoices")
-    print("\t...updating MRR worksheet")
+    return wks  
+
+
+  def to_gsheet(self,creds,spreadsheet_title=None,worksheet_title=None):
+    """
+    Parameters
+    ----------
+    creds : google.oauth2.service_account.Credentials
+        Google Authentication Credentials.
+    spreadsheet_title : str
+        The title of the Google spreadsheet to update. The spreadsheet must exist and the user associated with the creds must have read/write access to the sheet.
+    worksheet_title: str
+        The title of the worksheet to update (a worksheet is within a spreadsheet). The worksheet will be created if it doesn't exist.
+
+    Returns
+    -------
+    None
+    """
+    frame = self.to_frame()
+
+    print("Opening Google Sheet...title=",spreadsheet_title)
+
+    # Must share sheet with "client_email" from JSON creds
+    sh = self.gsheet_client(creds).open(spreadsheet_title)
+
+    wks = self.find_or_create_wks(sh,worksheet_title)    
+
+    print("\t...updating worksheet")
     wks.clear(fields="*")
-
-
-
-    wks.set_dataframe(strip_tz(grouped),(1,1), copy_index=True, nan="")
+    wks.set_dataframe(self.strip_frame_tz(frame),(1,1), copy_index=True, nan="", fit=True)
+    wks.cell('A1').value = frame.index.name
     print("\t...Done.")
 
 

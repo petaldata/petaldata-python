@@ -3,6 +3,8 @@
 import sys
 sys.path.append("/Users/dlite/projects/petaldata-python")
 import petaldata
+from datetime import datetime
+import pandas as pd
 
 from dotenv import load_dotenv
 load_dotenv(override=True)
@@ -21,6 +23,12 @@ invoices.load()
 
 # Generate dataframe with MRR by month
 
-report = petaldata.resource.stripe.reports.MRRByMonth(invoices)
-df = report.to_frame(tz='America/Denver')
+report = petaldata.resource.stripe.reports.MRRByMonth(invoices,tz='America/Denver')
+df = report.to_frame()
 print(df)
+
+# date = pd.Timestamp(datetime.now()).floor(freq='D') - pd.offsets.MonthBegin(1) 
+# end_time=pd.Timestamp(date)
+# report = petaldata.resource.stripe.reports.NewCustomers(invoices,tz="America/Denver", end_time=end_time)
+# df = report.to_frame()
+# print("DF Shape:",df.shape)

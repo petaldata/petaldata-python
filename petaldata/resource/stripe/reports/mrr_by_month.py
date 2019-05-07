@@ -8,15 +8,12 @@ from petaldata.resource.stripe.reports.abstract_stripe_report import AbstractStr
 from petaldata.resource.stripe.reports import query_filters
 
 class MRRByMonth(AbstractStripeReport):
-  def __init__(self,invoices):
-    super().__init__(invoices)
 
-  def to_frame(self,tz='UTC',end_time=datetime.now()):
-    df = self.set_frame_tz(self.df,tz=tz)
-    df = self.strip_frame_tz(self.df)
-    end_timestamp = self.setup_time(end_time,tz=tz)
+  def __init__(self,invoices,tz='UTC',end_time=datetime.now()):
+    super().__init__(invoices,tz=tz,end_time=end_time)
 
-    df_filtered = df[(df.billing_reason != "manual") & query_filters.time_range_query(df,df.created.min(),end_timestamp) & query_filters.billing_status_query(df)]
+  def to_frame(self):
+    df_filtered = self.df[(self.df.billing_reason != "manual") & query_filters.time_range_query(self.df,self.df.created.min(),self.end_timestamp) & query_filters.billing_status_query(self.df)]
     grouped = df_filtered.groupby(pd.Grouper(key="created",freq="M")).agg(
       {
         "amount_due": "sum", 
@@ -33,3 +30,6 @@ class MRRByMonth(AbstractStripeReport):
     grouped.sort_index(ascending=False)
     grouped = self.cents_to_dollars(grouped, cols=[i for i in grouped.columns if 'amount' in i])
     return grouped
+
+  def to_gsheet(self,creds,spreadsheet_title=None,worksheet_title="Monthly MRR via Invoices"):
+    super().to_gsheet(creds,spreadsheet_title,worksheet_title)
