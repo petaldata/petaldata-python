@@ -2,6 +2,7 @@ import datetime
 from datetime import datetime
 
 from petaldata.resource.stripe.reports.abstract_stripe_report import AbstractStripeReport
+from petaldata.resource.stripe.reports.adjusted_invoices import AdjustedInvoices
 
 # Aggregrate Reports
 from petaldata.resource.stripe.reports.mrr_by_month import MRRByMonth
