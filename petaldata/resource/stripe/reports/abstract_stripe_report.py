@@ -121,12 +121,9 @@ class AbstractStripeReport(object):
 
     # Must share sheet with "client_email" from JSON creds
     sh = self.gsheet_client(creds).open(spreadsheet_title)
-
-    wks = self.find_or_create_wks(sh,worksheet_title)    
-
+    wks = self.find_or_create_wks(sh,worksheet_title)
     print("\t...updating worksheet")
-    # Keep the header row
-    wks.delete_rows(1,wks.rows-1)
+    wks.clear()
     wks.set_dataframe(self.strip_frame_tz(frame),(1,1), copy_index=True, nan="")
     wks.cell('A1').value = frame.index.name
     print("\t...Done.")
