@@ -38,6 +38,7 @@ class AbstractMoMDiff(AbstractStripeReport):
 
   @staticmethod
   def create_time_ranges(cur_end):
+      # cur_start ends up being in utc, not the tz 00:00 start time for the month.
       cur_start = cur_end.ceil(freq='D') - pd.offsets.MonthBegin(1)
       prev_end = cur_end - pd.DateOffset(months=1)
       prev_start = prev_end.ceil(freq='D') - pd.offsets.MonthBegin()

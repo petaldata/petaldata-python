@@ -30,7 +30,7 @@ class AbstractStripeReport(object):
 
     self._gsheet_client = None
 
-    self.end_timestamp = self.setup_time(end_time)
+    self.end_timestamp = self.setup_time(end_time,tz=tz)
 
   
   @staticmethod
@@ -43,9 +43,9 @@ class AbstractStripeReport(object):
     return df
 
   @staticmethod
-  def setup_time(dt):
+  def setup_time(dt,tz=None):
     t=pd.Timestamp(dt)
-    t=t.tz_convert('UTC')
+    t=t.tz_convert(tz)
     return t
 
   @staticmethod

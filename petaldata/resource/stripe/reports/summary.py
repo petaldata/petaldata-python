@@ -38,5 +38,5 @@ class Summary(AbstractStripeReport):
     wks.cell('I11').value = df_mtd.customers.max()
     wks.cell('I12').value = df_mtd["customers (Previous Month)"].max()
     # logging updated at
-    wks.cell('I3').value = str(self.setup_time(datetime.now().astimezone()).tz_convert(self.tz))
+    wks.cell('I3').value = str(self.setup_time(datetime.now().astimezone(),tz=self.tz))
     print("\t...Done.")
