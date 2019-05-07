@@ -8,7 +8,7 @@ from petaldata.resource.stripe.reports.abstract_stripe_report import AbstractStr
 from petaldata.resource.stripe.reports import query_filters
 
 class AbstractMoMDiff(AbstractStripeReport):
-  def __init__(self,invoices,tz='UTC',end_time=datetime.now()):
+  def __init__(self,invoices,tz='UTC',end_time=datetime.now().astimezone()):
     super().__init__(invoices,tz=tz,end_time=end_time)
 
     self.prev_start,self.prev_end,self.cur_start,self.cur_end = self.create_time_ranges(self.end_timestamp)

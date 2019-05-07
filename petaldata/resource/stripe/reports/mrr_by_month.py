@@ -9,7 +9,7 @@ from petaldata.resource.stripe.reports import query_filters
 
 class MRRByMonth(AbstractStripeReport):
 
-  def __init__(self,invoices,tz='UTC',end_time=datetime.now()):
+  def __init__(self,invoices,tz='UTC',end_time=datetime.now().astimezone()):
     super().__init__(invoices,tz=tz,end_time=end_time)
 
   def to_frame(self):

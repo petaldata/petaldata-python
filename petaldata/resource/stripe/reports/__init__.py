@@ -13,7 +13,7 @@ from petaldata.resource.stripe.reports.summary import Summary
 # Customer Lists
 from petaldata.resource.stripe.reports.customer_lists import *
 
-def all(invoices,tz='UTC',end_time=datetime.now()):
+def all(invoices,tz='UTC',end_time=datetime.now().astimezone()):
   reports = []
   res=map(lambda cls: cls(invoices,tz=tz,end_time=end_time), [MRRByMonth,RevenueByPlanByMonth,MTDRevenue,New,ExpansionContraction,Churned,Summary])
   return list(res)

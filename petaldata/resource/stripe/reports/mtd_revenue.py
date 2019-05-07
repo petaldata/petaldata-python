@@ -9,7 +9,7 @@ from petaldata.resource.stripe.reports import query_filters
 
 class MTDRevenue(AbstractStripeReport):
 
-    def __init__(self,invoices,tz='UTC',end_time=datetime.now(), fullRange=True):
+    def __init__(self,invoices,tz='UTC',end_time=datetime.now().astimezone(), fullRange=True):
         super().__init__(invoices,tz=tz,end_time=end_time)
         self.fullRange = fullRange
         print("MTD - comparing ({} - {}) to previous month ({} - {})".format(self.cur_start,self.cur_end,self.prev_start,self.prev_end))

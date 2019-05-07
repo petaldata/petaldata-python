@@ -10,11 +10,23 @@ from petaldata.resource.stripe.reports.adjusted_invoices import AdjustedInvoices
 
 
 class AbstractStripeReport(object):
-  def __init__(self,invoices,tz='UTC',end_time=datetime.now()):
+  def __init__(self,invoices,tz='UTC',end_time=datetime.now().astimezone()):
+    """
+    Parameters
+    ----------
+    invoices : stripe.Invoice or stripe.reports.AdjustedInvoices
+    tz : str
+        The timezone all report data should be presented with.
+    end_time: tz-aware datetime
+
+    Returns
+    -------
+    AbstractStripeReport
+    """
     self.df = invoices.df
     self.tz = tz
     if invoices.__class__.__name__ == 'Invoice':
-      self.df = AdjustedInvoices(invoices,tz='UTC',end_time=datetime.now()).df
+      self.df = AdjustedInvoices(invoices,tz='UTC',end_time=datetime.now().astimezone()).df
 
     self._gsheet_client = None
 
@@ -31,9 +43,9 @@ class AbstractStripeReport(object):
     return df
 
   @staticmethod
-  def setup_time(dt,tz=None):
+  def setup_time(dt):
     t=pd.Timestamp(dt)
-    t=t.tz_localize(tz)#.tz_convert(None)
+    t=t.tz_convert('UTC')
     return t
 
   @staticmethod

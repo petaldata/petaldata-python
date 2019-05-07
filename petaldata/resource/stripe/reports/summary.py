@@ -10,7 +10,7 @@ from petaldata.resource.stripe.reports import query_filters
 
 class Summary(AbstractStripeReport):
 
-  def __init__(self,invoices,tz='UTC',end_time=datetime.now()):
+  def __init__(self,invoices,tz='UTC',end_time=datetime.now().astimezone()):
     super().__init__(invoices,tz=tz,end_time=end_time)
     self.mtd_report = MTDRevenue(invoices,tz=tz,end_time=end_time,fullRange=False)
 
@@ -38,5 +38,5 @@ class Summary(AbstractStripeReport):
     wks.cell('I11').value = df_mtd.customers.max()
     wks.cell('I12').value = df_mtd["customers (Previous Month)"].max()
     # logging updated at
-    wks.cell('I3').value = str(datetime.now())
+    wks.cell('I3').value = str(self.setup_time(datetime.now().astimezone()).tz_convert(self.tz))
     print("\t...Done.")

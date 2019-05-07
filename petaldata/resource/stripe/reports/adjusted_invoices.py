@@ -8,7 +8,7 @@ import petaldata
 from petaldata.resource.stripe.reports import query_filters
 
 class AdjustedInvoices(object):
-    def __init__(self,invoices,tz='UTC',end_time=datetime.now()):
+    def __init__(self,invoices,tz='UTC',end_time=datetime.now().astimezone()):
         self.df = invoices.df
         self.df = self.set_frame_tz(self.df,tz=tz)
         self.convert_annual_subs_to_monthly(self.df)
