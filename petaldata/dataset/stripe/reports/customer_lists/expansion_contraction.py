@@ -4,8 +4,8 @@ from datetime import datetime
 from datetime import date
 
 import petaldata
-from petaldata.resource.stripe.reports.customer_lists.abstract_mom_diff import AbstractMoMDiff
-from petaldata.resource.stripe.reports import query_filters
+from petaldata.dataset.stripe.reports.customer_lists.abstract_mom_diff import AbstractMoMDiff
+from petaldata.dataset.stripe.reports import query_filters
 
 class ExpansionContraction(AbstractMoMDiff):
   """

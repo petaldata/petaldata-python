@@ -5,7 +5,7 @@ from datetime import date
 import pygsheets
 
 import petaldata
-from petaldata.resource.stripe.reports import query_filters
+from petaldata.dataset.stripe.reports import query_filters
 
 class AdjustedInvoices(object):
     def __init__(self,invoices,tz='UTC',end_time=datetime.now().astimezone()):

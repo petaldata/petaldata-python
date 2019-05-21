@@ -9,11 +9,11 @@ cache_dir = None
 
 # API Resources
 
-from petaldata.resource import *
-from petaldata.resource import abstract
-from petaldata.resource import hubspot
-from petaldata.resource import stripe
-from petaldata.resource.stripe.reports import *
+from petaldata.dataset import *
+from petaldata.dataset import abstract
+from petaldata.dataset import hubspot
+from petaldata.dataset import stripe
+from petaldata.dataset.stripe.reports import *
 
 
 from petaldata.storage import *

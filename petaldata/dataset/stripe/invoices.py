@@ -1,8 +1,8 @@
 import petaldata
-from petaldata.resource.abstract import Resource
+from petaldata.dataset.abstract import Dataset
 import calendar
 
-class Invoice(Resource):
+class Invoices(Dataset):
   RESOURCE_URL = '/stripe/invoices'
   CREATED_AT_FIELD = 'created'
   CSV_FILE_PREFIX = "stripe_invoices_"
@@ -11,7 +11,7 @@ class Invoice(Resource):
   def request_headers(self):
     return {
       "Authorization": "Bearer %s" % (petaldata.api_key,),
-      'STRIPE-API-KEY': petaldata.resource.stripe.api_key
+      'STRIPE-API-KEY': petaldata.dataset.stripe.api_key
     }
 
   def request_params(self,created_gt,_offset):

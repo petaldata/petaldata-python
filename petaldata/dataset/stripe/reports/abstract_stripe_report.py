@@ -5,8 +5,8 @@ from datetime import date
 import pygsheets
 
 import petaldata
-from petaldata.resource.stripe.reports import query_filters
-from petaldata.resource.stripe.reports.adjusted_invoices import AdjustedInvoices
+from petaldata.dataset.stripe.reports import query_filters
+from petaldata.dataset.stripe.reports.adjusted_invoices import AdjustedInvoices
 
 
 class AbstractStripeReport(object):
@@ -25,7 +25,7 @@ class AbstractStripeReport(object):
     """
     self.df = invoices.df
     self.tz = tz
-    if invoices.__class__.__name__ == 'Invoice':
+    if invoices.__class__.__name__ == 'Invoices':
       self.df = AdjustedInvoices(invoices,tz='UTC',end_time=datetime.now().astimezone()).df
 
     self._gsheet_client = None

@@ -4,9 +4,9 @@ from datetime import datetime
 from datetime import date
 
 import petaldata
-from petaldata.resource.stripe.reports.abstract_stripe_report import AbstractStripeReport
-from petaldata.resource.stripe.reports.mtd_revenue import MTDRevenue
-from petaldata.resource.stripe.reports import query_filters
+from petaldata.dataset.stripe.reports.abstract_stripe_report import AbstractStripeReport
+from petaldata.dataset.stripe.reports.mtd_revenue import MTDRevenue
+from petaldata.dataset.stripe.reports import query_filters
 
 class Summary(AbstractStripeReport):
 

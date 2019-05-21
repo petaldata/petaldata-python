@@ -9,7 +9,7 @@ import petaldata
 from petaldata import util
 from petaldata.storage import *
 
-class Resource(object):
+class Dataset(object):
   def __init__(self,base_pickle_filename="stripe_invoice.pkl"):
     self.csv_filename = None
     self.df = None

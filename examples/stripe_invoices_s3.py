@@ -12,7 +12,7 @@ import datetime
 # Configuration
 
 petaldata.api_base = 'http://localhost:3001'
-petaldata.resource.stripe.api_key = os.getenv("STRIPE_API_KEY")
+petaldata.dataset.stripe.api_key = os.getenv("STRIPE_API_KEY")
 petaldata.storage.Local.dir = os.getenv("CACHE_DIR")
 
 petaldata.storage.S3.aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
@@ -24,7 +24,7 @@ petaldata.storage.Local.enabled = False
 
 # Loads Stripe Invoices, using S3 storage. 
 
-invoices = petaldata.resource.stripe.Invoice()
+invoices = petaldata.dataset.stripe.Invoices()
 invoices.load()
 invoices.update(created_gt=petaldata.util.days_ago(30))
 invoices.save()

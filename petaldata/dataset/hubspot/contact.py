@@ -53,7 +53,7 @@ class Contact(object):
   def request_headers(self):
     return {
       "Authorization": "Bearer %s" % (petaldata.api_key,),
-      'HUBSPOT_API_KEY': petaldata.resource.hubspot.api_key
+      'HUBSPOT_API_KEY': petaldata.dataset.hubspot.api_key
     }
 
   def load(self):
