@@ -10,7 +10,8 @@ from petaldata import util
 from petaldata.storage import *
 
 class Dataset(object):
-  def __init__(self,base_pickle_filename="stripe_invoice.pkl"):
+  CSV_FILE_PREFIX = "abstract_dataset"
+  def __init__(self,base_pickle_filename=CSV_FILE_PREFIX+".pkl"):
     self.csv_filename = None
     self.df = None
     self.__metadata = None
@@ -87,11 +88,10 @@ class Dataset(object):
     print("Loading {} MB CSV file...".format(Local.file_size_in_mb(filename)))
     dataframe = pd.read_csv(filename,parse_dates = self.metadata.get("convert_dates"))
     dataframe.set_index(self.metadata.get("index"),inplace=True)
-    print("created from download:",dataframe.created.dtype,dataframe.created.head(3))
     self.df = dataframe
     print("\t...Done. Dataframe Shape:",self.df.shape)
     count = self.df.shape[0]
-    if count > 0:
+    if ('created' in dataframe.columns) & count > 0:
       print("\tTime Range:",self.df[self.CREATED_AT_FIELD].min(), "-", self.df[self.CREATED_AT_FIELD].max())
     return self.df
 
@@ -152,6 +152,7 @@ class Dataset(object):
     r.raise_for_status()
     metadata = r.json()
     print("Loaded metadata w/keys=",list(metadata.keys()))
+    print(metadata)
     return metadata
 
   @staticmethod

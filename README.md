@@ -37,4 +37,11 @@ python -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 
 ## Adding a Dataset
 
-* Create a 
+* Create a `petaldata/dataset/[CLOUD_APP]` directory
+* Create a `petaldata/dataset/[CLOUD_APP]/[DATASET_NAME (PLURAL)].py` file.
+  * Create a class that inherits from `petaldata.dataset.abstract.Dataset`. See `petaldata.dataset.stripe.Invoices` for an example.
+* Create a `petaldata/dataset/[CLOUD_APP]/__init__.py` file. 
+  * Import the dataset created above. 
+  * Add config variables needed to use the `[CLOUD_APP] API (like an `API KEY`).
+* Add `from petaldata.dataset import [CLOUD_APP]` to `petaldata/__init__.py`
+
