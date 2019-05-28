@@ -125,3 +125,4 @@ dmypy.json
 .pyre/
 
 .DS_Store
+petaldata_cache/

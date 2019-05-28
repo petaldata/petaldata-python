@@ -4,8 +4,34 @@ from petaldata import util
 import pandas as pd
 
 class Local(AbstractStorage):
+  """
+  Local Storage abstracts local file access patterns.
+  """
   enabled = True
   dir = None
+
+  DEFAUL_DIRECTORY_NAME = "petaldata_cache"
+
+  def __init__(self,base_pickle_filename):
+    """
+    Initializes local storage, creating `petaldata.Local.dir` if it doesn't exist. If `petaldata.Local.dir` isn't specified,
+    it is set to `petaldata.Local.default_directory_path`.
+    """
+    if (self.dir == None): self.dir = self.default_directory_path
+    self._create_dir()
+    super().__init__(base_pickle_filename)
+
+  @property
+  def default_directory_path(self):
+    return os.getcwd() + "/{}/".format(self.DEFAUL_DIRECTORY_NAME)
+
+  def _create_dir(self):
+    """
+    Creates `petaldata.Local.dir` if it doesn't exist.
+    """
+    if not self.dir_exists():
+      print("Creating local storage directory={}".format(self.dir))
+      os.makedirs(self.dir)
 
   def available(self):
     res = self.dir_exists()

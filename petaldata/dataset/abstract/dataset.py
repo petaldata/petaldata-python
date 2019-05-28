@@ -10,29 +10,33 @@ from petaldata import util
 from petaldata.storage import *
 
 class Dataset(object):
-  CSV_FILE_PREFIX = "abstract_dataset"
-  def __init__(self,base_pickle_filename=CSV_FILE_PREFIX+".pkl"):
+  CSV_FILE_PREFIX = "dataset"
+
+  def __init__(self,base_pickle_filename=None):
+    """
+    Initializes the Dataset, attempting to load a previously saved dataframe via `base_pickle_filename`.
+
+    Parameters
+    ----------
+    base_pickle_filename : str
+      The name of the Pickle file the Dataset should be loaded from and saved to. If the file doesn't exit, it will be created when
+      the Dataset is saved. If not provided, `default_base_pickle_filename()` is used.
+    """
     self.csv_filename = None
     self.df = None
     self.__metadata = None
+    if base_pickle_filename == None: base_pickle_filename = self.default_base_pickle_filename()
     self.local = Local(base_pickle_filename)
     self.s3 = S3.if_enabled(base_pickle_filename)
+    self._load_from_cache()
 
-  def load(self):
-    print("Attempting to load saved pickle file...")
-    if (self.df is None) & (self.local.enabled == True): self.df = self.local.read_pickle_dataframe() 
-    if (self.df is None) & (self.s3 is not None): self.df = self.s3.read_pickle_dataframe() 
-
-    if self.df is None:
-      print("\tNo cached files exist.")
-      self.download()
-      self.load_from_download()
+  def download(self,created_gt=None,_offset=None, limit=None):
+    self._download_csv(created_gt,_offset,limit)
+    self._load_from_download()
 
     if self.df is None:
       print("\tUnable to load dataframe.")
-    else:
-      print("\t...Done. Dataframe Shape:",self.df.shape)
-      return self.df
+    return self.df
 
   # TODO - rename to merge?
   # https://en.wikipedia.org/wiki/Merge_(SQL)
@@ -69,34 +73,10 @@ class Dataset(object):
     new_count = self.df.shape[0] - old_count
     if new_count > 0:
       print("Added {} new rows. Now with {} total rows.".format(new_count, self.df.shape[0]))
-      print("\tTime Range:",self.df[self.CREATED_AT_FIELD].min(), "-", self.df[self.CREATED_AT_FIELD].max())
-      # TODO - I think hubspot saves after update ... make consistent
+      print("\tTime Range:",self.df[self.created].min(), "-", self.df[self.created].max())
     else:
       print("No new rows.")
     return self
-    
-
-  @property
-  def updated_at(self):
-    return self.df[self.CREATED_AT_FIELD].max()
-
-  def load_from_download(self,filename=None):
-    if filename is None:
-      filename = self.csv_filename
-    else:
-      filename = self.local.dir + filename
-    print("Loading {} MB CSV file...".format(Local.file_size_in_mb(filename)))
-    dataframe = pd.read_csv(filename,parse_dates = self.metadata.get("convert_dates"))
-    dataframe.set_index(self.metadata.get("index"),inplace=True)
-    self.df = dataframe
-    print("\t...Done. Dataframe Shape:",self.df.shape)
-    count = self.df.shape[0]
-    if ('created' in dataframe.columns) & count > 0:
-      print("\tTime Range:",self.df[self.CREATED_AT_FIELD].min(), "-", self.df[self.CREATED_AT_FIELD].max())
-    return self.df
-
-  def request_params(self,created_gt,_offset):
-    pass
 
   def reset(self):
     print("Resetting...")
@@ -113,13 +93,31 @@ class Dataset(object):
     if self.s3: self.s3.save(self)
 
     return True
+    
+  @property
+  def updated_at(self):
+    return self.df[self.created].max()
 
-  def download(self,created_gt=None,_offset=None):
+  def request_params(self,created_gt,_offset):
+    pass
+
+  def default_base_pickle_filename(self):
+    return self.CSV_FILE_PREFIX+".pkl"
+
+  def _load_from_cache(self):
+    print("Attempting to load saved pickle file...")
+    if (self.local.enabled == True): self.df = self.local.read_pickle_dataframe() 
+    if (self.s3 is not None): self.df = self.s3.read_pickle_dataframe() 
+
+    if self.df is None:
+      print("\tNo cached files exist.")
+
+  def _download_csv(self,created_gt=None,_offset=None, limit=None):
     first_chunk = True
     start_time = datetime.now()
-    filename = self.local.csv_download_filename(self.CSV_FILE_PREFIX,start_time)
+    filename = self.local.csv_download_filename(self.CSV_FILE_PREFIX+"_",start_time)
     print("Starting download to",filename,"...")
-    with requests.get(self.api_url+".csv", headers=self.request_headers, params=self.request_params(created_gt,_offset), stream=True) as r:
+    with requests.get(self.api_url+".csv", headers=self.request_headers, params=self.request_params(created_gt,limit,_offset), stream=True) as r:
         r.raise_for_status()
         with open(filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=None):
@@ -139,6 +137,21 @@ class Dataset(object):
           round(time_delta.seconds/60.0,2), "minutes", "\n\tLocation:", filename)
     self.csv_filename = filename
     return self.csv_filename
+
+  def _load_from_download(self,filename=None):
+    if filename is None:
+      filename = self.csv_filename
+    else:
+      filename = self.local.dir + filename
+    print("Loading {} MB CSV file...".format(Local.file_size_in_mb(filename)))
+    dataframe = pd.read_csv(filename,parse_dates = self.metadata.get("convert_dates"))
+    dataframe.set_index(self.metadata.get("index"),inplace=True)
+    self.df = dataframe
+    print("\t...Done. Dataframe Shape:",self.df.shape)
+    count = self.df.shape[0]
+    if ('created' in dataframe.columns) & (count > 0):
+      print("\tTime Range:",self.df.created.min(), "-", self.df.created.max())
+    return self.df
 
   @property
   def metadata(self):

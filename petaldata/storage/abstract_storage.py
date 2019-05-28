@@ -10,6 +10,9 @@ class AbstractStorage(object):
       return None
 
   def __init__(self,base_pickle_filename):
+    """
+    Initializes storage, raising an exception if the storage isn't available.
+    """
     self.base_pickle_filename = base_pickle_filename
     assert(self.available()), "{} storage isn't available.".format(self.__class__)
 
