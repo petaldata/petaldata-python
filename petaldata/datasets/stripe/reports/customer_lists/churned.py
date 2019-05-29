@@ -4,8 +4,8 @@ from datetime import datetime
 from datetime import date
 
 import petaldata
-from petaldata.dataset.stripe.reports.customer_lists.abstract_mom_diff import AbstractMoMDiff
-from petaldata.dataset.stripe.reports import query_filters
+from petaldata.datasets.stripe.reports.customer_lists.abstract_mom_diff import AbstractMoMDiff
+from petaldata.datasets.stripe.reports import query_filters
 
 class Churned(AbstractMoMDiff):
   """

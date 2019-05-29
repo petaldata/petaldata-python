@@ -5,8 +5,8 @@ from datetime import date
 import pygsheets
 
 import petaldata
-from petaldata.dataset.stripe.reports import query_filters
-from petaldata.dataset.stripe.reports.adjusted_invoices import AdjustedInvoices
+from petaldata.datasets.stripe.reports import query_filters
+from petaldata.datasets.stripe.reports.adjusted_invoices import AdjustedInvoices
 
 
 class AbstractStripeReport(object):

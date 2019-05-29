@@ -1,5 +1,5 @@
 import petaldata
-from petaldata.dataset.abstract import Dataset
+from petaldata.datasets.abstract import Dataset
 
 class Card(Dataset):
   RESOURCE_URL = "/metabase/card/{id}"
@@ -18,10 +18,10 @@ class Card(Dataset):
   def request_headers(self):
     return {
       "Authorization": "Bearer %s" % (petaldata.api_key,),
-      "METABASE_URL": petaldata.dataset.metabase.url,
-      "METABASE_USERNAME": petaldata.dataset.metabase.username,
-      "METABASE_PASSWORD": petaldata.dataset.metabase.password,
-      "METABASE_TOKEN": petaldata.dataset.metabase.token
+      "METABASE_URL": petaldata.datasets.metabase.url,
+      "METABASE_USERNAME": petaldata.datasets.metabase.username,
+      "METABASE_PASSWORD": petaldata.datasets.metabase.password,
+      "METABASE_TOKEN": petaldata.datasets.metabase.token
     }
 
   def request_params(self,created_gt,_offset):

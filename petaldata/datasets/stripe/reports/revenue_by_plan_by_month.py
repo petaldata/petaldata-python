@@ -4,8 +4,8 @@ from datetime import datetime
 from datetime import date
 
 import petaldata
-from petaldata.dataset.stripe.reports.abstract_stripe_report import AbstractStripeReport
-from petaldata.dataset.stripe.reports import query_filters
+from petaldata.datasets.stripe.reports.abstract_stripe_report import AbstractStripeReport
+from petaldata.datasets.stripe.reports import query_filters
 
 class RevenueByPlanByMonth(AbstractStripeReport):
 

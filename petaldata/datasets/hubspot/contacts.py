@@ -1,5 +1,5 @@
 import petaldata
-from petaldata.dataset.abstract import Dataset
+from petaldata.datasets.abstract import Dataset
 import calendar
 
 class Contacts(Dataset):
@@ -10,7 +10,7 @@ class Contacts(Dataset):
   def request_headers(self):
     return {
       "Authorization": "Bearer %s" % (petaldata.api_key,),
-      'HUBSPOT_API_KEY': petaldata.dataset.hubspot.api_key
+      'HUBSPOT_API_KEY': petaldata.datasets.hubspot.api_key
     }
 
   def default_base_pickle_filename(self):

@@ -1,5 +1,5 @@
 import petaldata
-from petaldata.dataset.abstract import Dataset
+from petaldata.datasets.abstract import Dataset
 import calendar
 
 class Invoices(Dataset):
@@ -11,7 +11,7 @@ class Invoices(Dataset):
   def request_headers(self):
     return {
       "Authorization": "Bearer %s" % (petaldata.api_key,),
-      'STRIPE-API-KEY': petaldata.dataset.stripe.api_key
+      'STRIPE-API-KEY': petaldata.datasets.stripe.api_key
     }
 
   def request_params(self,created_gt,_offset):

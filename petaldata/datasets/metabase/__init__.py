@@ -3,4 +3,4 @@ username = None
 password = None
 token = None
 
-from petaldata.dataset.metabase.card import Card
+from petaldata.datasets.metabase.card import Card

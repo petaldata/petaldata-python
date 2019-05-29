@@ -11,11 +11,11 @@ import os
 # Configuration
 
 petaldata.api_base = 'http://localhost:3001'
-petaldata.dataset.hubspot.api_key = os.getenv("HUBSPOT_API_KEY")
+petaldata.datasets.hubspot.api_key = os.getenv("HUBSPOT_API_KEY")
 
 # Loads Hubspot Contacts. 
 
-contacts = petaldata.dataset.hubspot.Contacts()
+contacts = petaldata.datasets.hubspot.Contacts()
 # contacts.download(limit=10)
 # TODO - NEXT
 contacts.upsert()

@@ -13,13 +13,13 @@ import os
 petaldata.api_base = 'http://localhost:3001'
 petaldata.storage.Local.dir = os.getenv("CACHE_DIR")
 
-petaldata.dataset.metabase.url = os.getenv("METABASE_URL")
-petaldata.dataset.metabase.username = os.getenv("METABASE_USERNAME")
-petaldata.dataset.metabase.password = os.getenv("METABASE_PASSWORD")
-petaldata.dataset.metabase.token = os.getenv("METABASE_TOKEN")
+petaldata.datasets.metabase.url = os.getenv("METABASE_URL")
+petaldata.datasets.metabase.username = os.getenv("METABASE_USERNAME")
+petaldata.datasets.metabase.password = os.getenv("METABASE_PASSWORD")
+petaldata.datasets.metabase.token = os.getenv("METABASE_TOKEN")
 
 # Loads Card
 
-card = petaldata.dataset.metabase.Card(266)
+card = petaldata.datasets.metabase.Card(266)
 card.load()
 card.save()

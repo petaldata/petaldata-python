@@ -153,24 +153,24 @@ class Dataset(object):
     # only concat if rows found, otherwise dtypes can change
     # https://stackoverflow.com/questions/33001585/pandas-dataframe-concat-update-upsert
     if other_resource.df.shape[0] > 0:
-      print("\tInserting new rows")
-      print("created before concat:",self.df.created.dtype,self.df.created.head(5))
-      print("other created before concat:",other_resource.df.created.dtype,other_resource.df.created.head(5))
+      print("\t...Inserting new rows")
+      # print("created before concat:",self.df.created.dtype,self.df.created.head(5))
+      # print("other created before concat:",other_resource.df.created.dtype,other_resource.df.created.head(5))
       df = pd.concat([self.df, other_resource.df[~other_resource.df.index.isin(self.df.index)]])
-      print("created after concat:",df.created.dtype,df.created.head(5))
-      print("\tUpdating existing rows")
+      # print("created after concat:",df.created.dtype,df.created.head(5))
+      print("\t...Updating existing rows")
       df.update(other_resource.df)
       # timezone is stripped after update. add back.
       df = self.set_date_tz(df)
-      print("created after set_date_z:",df.created.dtype,df.created.head(5))
+      # print("created after set_date_z:",df.created.dtype,df.created.head(5))
       self.df = df
 
     new_count = self.df.shape[0] - old_count
     if new_count > 0:
-      print("Added {} new rows. Now with {} total rows.".format(new_count, self.df.shape[0]))
+      print("...Added {} new rows. Now with {} total rows.".format(new_count, self.df.shape[0]))
       self._log_df_info()
     else:
-      print("No new rows.")
+      print("...No new rows.")
     return self
 
   @property
