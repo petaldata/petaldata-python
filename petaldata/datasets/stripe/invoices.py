@@ -4,8 +4,7 @@ import calendar
 
 class Invoices(Dataset):
   RESOURCE_URL = '/stripe/invoices'
-  CREATED_AT_FIELD = 'created'
-  CSV_FILE_PREFIX = "stripe_invoices_"
+  CSV_FILE_PREFIX = "stripe_invoices"
 
   @property
   def request_headers(self):
