@@ -1,6 +1,6 @@
 # PetalData Python Library
 
-[PetalData](https://petaldata.app) is a uniform API for downloading, saving, and updating analysis-ready data across cloud apps like Stripe, Hubspot, and Metabase.
+[PetalData](https://petaldata.app) is a uniform API for downloading data science-ready datasets from cloud apps like Stripe, Hubspot, and Metabase.
 
 ## Installation
 
