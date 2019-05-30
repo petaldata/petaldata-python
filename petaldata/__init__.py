@@ -4,7 +4,7 @@
 # Configuration variables
 
 api_key = None
-api_base = "https://petaldata.app/api"
+api_base = "https://app.petaldata.app"
 cache_dir = None
 
 # API Datasets

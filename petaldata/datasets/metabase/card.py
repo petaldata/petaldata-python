@@ -3,7 +3,6 @@ from petaldata.datasets.abstract import Dataset
 
 class Card(Dataset):
   RESOURCE_URL = "/metabase/card/{id}"
-  # CREATED_AT_FIELD = 'created'
   CSV_FILE_PREFIX = "metabase_card"
 
   def __init__(self,id):
@@ -24,7 +23,7 @@ class Card(Dataset):
       "METABASE_TOKEN": petaldata.datasets.metabase.token
     }
 
-  def request_params(self,created_gt,_offset):
+  def request_params(self,created_gt,limit,_offset):
     params = {}
     if created_gt is not None:
        params['created_gt'] = calendar.timegm(created_gt.timetuple())

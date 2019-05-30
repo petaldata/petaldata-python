@@ -1,21 +1,19 @@
-# General Setup
+# Downloads Hubspot contacts.
+# Usage:
+# * HUBSPOT_API_KEY=[INSERT] python -i examples/hubspot_contacts.py
+# * Access the dataframe via `contacts.df`
 
-import sys
-sys.path.append("/Users/dlite/projects/petaldata-python")
-import petaldata
-
-from dotenv import load_dotenv
-load_dotenv()
 import os
 
-# Configuration
+# Loads dev-specific configuration if env var. DEV=true.
+if (os.getenv("DEV") == 'true'):
+  import dev_config
 
-petaldata.api_base = 'http://localhost:3001'
+import petaldata
+
+# Configuration
 petaldata.datasets.hubspot.api_key = os.getenv("HUBSPOT_API_KEY")
 
-# Loads Hubspot Contacts. 
-
+# Downloads Hubspot Contacts.
 contacts = petaldata.datasets.hubspot.Contacts()
-# contacts.download(limit=10)
-# TODO - NEXT
-contacts.upsert()
+contacts.download(limit=10)

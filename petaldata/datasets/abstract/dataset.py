@@ -64,8 +64,8 @@ class Dataset(object):
     self._upsert(new)
     return self
 
-  def reset(self):
-    print("Resetting...")
+  def delete(self):
+    print("Deleting...")
     if self.local.enabled == True: self.local.delete()
     if self.s3: self.s3.delete()
 

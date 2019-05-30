@@ -1,30 +1,31 @@
+# Downloads Stripe Invoices, storing results in an Amazon S3 bucket.
+# Usage:
+# * STRIPE_API_KEY=[INSERT] python -i examples/stripe_invoices.py
+# * Access the dataframe via `invoices.df`
+
 # General Setup
-
-import sys
-sys.path.append("/Users/dlite/projects/petaldata-python")
-import petaldata
-
-from dotenv import load_dotenv
-load_dotenv(override=True)
 import os
+
+# Loads dev-specific configuration if env var. DEV=true.
+if (os.getenv("DEV") == 'true'):
+  import dev_config
+
+import petaldata
 import datetime
 
 # Configuration
 
-petaldata.api_base = 'http://localhost:3001'
 petaldata.datasets.stripe.api_key = os.getenv("STRIPE_API_KEY")
-petaldata.storage.Local.dir = os.getenv("CACHE_DIR")
 
 petaldata.storage.S3.aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
 petaldata.storage.S3.aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
-petaldata.storage.S3.bucket_name = 'petaldata-test2'
+petaldata.storage.S3.bucket_name = os.getenv("AWS_BUCKET")
 
 petaldata.storage.S3.enabled = True
 petaldata.storage.Local.enabled = False
 
-# Loads Stripe Invoices, using S3 storage. 
+# Downloads Stripe Invoices, saving the invoices to S3 storage. 
 
 invoices = petaldata.datasets.stripe.Invoices()
-invoices.load()
-invoices.update(created_gt=petaldata.util.days_ago(30))
+invoices.download(limit=10)
 invoices.save()

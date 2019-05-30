@@ -1,22 +1,22 @@
+# Downloads Stripe Invoices.
+# Usage:
+# * STRIPE_API_KEY=[INSERT] python -i examples/stripe_invoices.py
+# * Access the dataframe via `invoices.df`
+
 # General Setup
-
-import sys
-sys.path.append("/Users/dlite/projects/petaldata-python")
-import petaldata
-
-from dotenv import load_dotenv
-load_dotenv(override=True)
 import os
+
+# Loads dev-specific configuration if env var. DEV=true.
+if (os.getenv("DEV") == 'true'):
+  import dev_config
+
+import petaldata
 
 # Configuration
 
-petaldata.api_base = 'http://localhost:3001'
 petaldata.datasets.stripe.api_key = os.getenv("STRIPE_API_KEY")
-petaldata.storage.Local.dir = os.getenv("CACHE_DIR")
 
-# Loads Stripe Invoices. 
+# Download Stripe Invoices. 
 
 invoices = petaldata.datasets.stripe.Invoices()
-invoices.load()
-invoices.update(created_gt=petaldata.util.days_ago(30))
-invoices.save()
+invoices.download(limit=10)
