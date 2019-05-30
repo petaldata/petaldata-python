@@ -1,6 +1,6 @@
 # PetalData Python Library
 
-The PetalData Python library provides convenient access to the [PetalData](https://petaldata.app) API from applications written in the Python language. It includes a set of convenience methods to handle common data access patterns like downloading data from a resource and incrementally updating the dataset.
+[PetalData](https://petaldata.app) is a uniform API for downloading, saving, and updating analysis-ready data across cloud apps like Stripe, Hubspot, and Metabase.
 
 ## Installation
 
@@ -14,16 +14,17 @@ Python 3.4+
 
 ## Usage
 
-The following configuration is required:
-
 ```python
 import petaldata
-petaldata.storage.Local.dir = os.getenv("CACHE_DIR") # downloads are saved to this directory
 ```
 
 ## Example Usage
 
-See the [examples directory](/examples).
+See the [examples directory](https://github.com/petaldata/petaldata-python/tree/master/examples) in the [GitHub repo](https://github.com/petaldata/petaldata-python).
+
+## Documentation
+
+Interactive documentation is at https://petaldata.app/.
 
 ## Releasing
 
@@ -45,3 +46,6 @@ python -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
   * Add config variables needed to use the `[CLOUD_APP] API (like an `API KEY`).
 * Add `from petaldata.datasets import [CLOUD_APP]` to `petaldata/__init__.py`
 
+## Questions
+
+Email support@petaldata.app.

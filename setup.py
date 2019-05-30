@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="petaldata",
-    version="0.0.6",
+    version="1.0.0",
     author="Derek Haynes",
     author_email="derek@petaldata.com",
-    description="Python bindings for the PetalData API",
+    description="A uniform API for downloading, saving, and updating analysis-ready data across cloud apps like Stripe, Hubspot, and Metabase.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/petaldata/petaldata-python",
