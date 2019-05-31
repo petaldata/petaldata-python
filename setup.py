@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="petaldata",
-    version="1.0.0",
+    version="1.0.1",
     author="Derek Haynes",
     author_email="derek@petaldata.com",
     description="A uniform API for downloading, saving, and updating analysis-ready data across cloud apps like Stripe, Hubspot, and Metabase.",
@@ -23,6 +23,7 @@ setuptools.setup(
         'numpy',
         'requests',
         'smart-open',
-        'boto3'
+        'boto3',
+        'pygsheets'
     ],
 )
