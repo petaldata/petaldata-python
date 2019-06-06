@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="petaldata",
-    version="1.0.1",
+    version="1.0.2",
     author="Derek Haynes",
     author_email="derek@petaldata.com",
-    description="A uniform API for downloading, saving, and updating analysis-ready data across cloud apps like Stripe, Hubspot, and Metabase.",
+    description="Export your data from cloud apps like Stripe, Hubspot, and Metabase into Pandas Dataframes.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/petaldata/petaldata-python",

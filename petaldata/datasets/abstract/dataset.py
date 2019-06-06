@@ -4,6 +4,7 @@ import datetime
 import os
 from datetime import datetime
 from datetime import date
+import json
 
 import petaldata
 from petaldata import util
@@ -110,7 +111,15 @@ class Dataset(object):
     filename = self.local.csv_download_filename(self.CSV_FILE_PREFIX+"_",start_time)
     print("Starting download to",filename,"...")
     with requests.get(self.api_url+".csv", headers=self.request_headers, params=self.request_params(created_gt,limit,_offset), stream=True) as r:
-        r.raise_for_status()
+        
+        try:
+          r.raise_for_status()
+        except requests.exceptions.HTTPError as error:
+          if error.response.status_code == 403:
+            raise AuthError(json.loads(error.response.text)["error"])
+          else:
+            raise error
+
         with open(filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=None):
                 # TODO - how to handle 500 errors in chunks?
@@ -201,3 +210,8 @@ class Dataset(object):
   @property
   def api_url(self):
     return petaldata.api_base + self.RESOURCE_URL
+
+class AuthError(Exception):
+  pass
+
+

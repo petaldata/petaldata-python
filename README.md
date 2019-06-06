@@ -1,6 +1,6 @@
 # PetalData Python Library
 
-[PetalData](https://petaldata.app) is a uniform API for exporting data science-ready datasets from cloud apps like Stripe, Hubspot, and Metabase.
+Export your data from cloud apps like Stripe, Hubspot, and Metabase into Pandas Dataframes with [PetalData](https://petaldata.app).
 
 ## Installation
 
@@ -28,7 +28,9 @@ Interactive documentation is at https://petaldata.app/.
 
 ## Releasing
 
-Bump the version number in `setup.py`. Then generate the distribution archive and upload the archive:
+* Update CHANGELOG
+* Bump the version number in `setup.py`.
+* Generate the distribution archive and upload the archive:
 
 ```
 rm dist/*
@@ -48,4 +50,4 @@ python -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 
 ## Questions
 
-Email support@petaldata.app.
+Email derek@petaldata.app.
